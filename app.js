@@ -73,21 +73,13 @@
 
     // ====== Quản lý điểm: dataset (hash tất cả text) ======
     const rawStudents = [
-      { code:'SV001', name:'Nguyen Van A', class:'KTPM01', mid:7.5, final:8.6, conduct:'Tốt' },
-      { code:'SV002', name:'Tran Thi B',   class:'KTPM01', mid:5.0, final:6.2, conduct:'Khá' },
-      { code:'SV003', name:'Le Van C',     class:'CNTT02', mid:4.2, final:5.1, conduct:'Trung bình' },
-      { code:'SV004', name:'Pham Thi D',   class:'CNTT02', mid:9.0, final:9.2, conduct:'Tốt' }
+      { code:'SV001', name:'Trần Ngọc Nhận', class:'KTPM01', mid:7.5, final:8.6, conduct:'Tốt' },
+      { code:'SV002', name:'Nguyễn Ngọc Hoàng',   class:'KTPM01', mid:5.0, final:6.2, conduct:'Khá' },
+      { code:'SV003', name:'Trần Thị Ninh',     class:'CNTT02', mid:4.2, final:5.1, conduct:'Trung bình' },
+      { code:'SV004', name:'Pham Quang Trường',   class:'CNTT02', mid:9.0, final:9.2, conduct:'Tốt' }
     ];
 
-    // Hash function (consistent, short hex)
-    function hashCode(str){
-      let h = 0; for(let i=0;i<str.length;i++){ h = (h<<5)-h + str.charCodeAt(i); h|=0; }
-      // to hex (8 chars) for compact UI
-      return ('00000000'+(h>>>0).toString(16)).slice(-8);
-    }
-    const H = (v)=> typeof v==='string' ? hashCode(v) : v; // hash text only
-
-    let students = rawStudents.map(s=>({...s, code:H(s.code), name:H(s.name), class:H(s.class)}));
+    let students = rawStudents;
 
     const tbody = document.getElementById('studentBody');
     const statCount = document.getElementById('statCount');
@@ -178,7 +170,6 @@
         code: svCode.value.trim(), name: svName.value.trim(), class: svClass.value.trim(),
         mid: Number(svMid.value), final: Number(svFinal.value), conduct: svConduct.value
       };
-      // hash text fields for display
       data.code = H(data.code); data.name = H(data.name); data.class = H(data.class);
       const i = idxEl.value;
       if(i==='') students.push(data); else students[Number(i)] = data;
@@ -196,6 +187,7 @@
       { name:'TRẦN THẾ LINH', dob:'1999-03-03', mssv:'K23DTCN027', class:'CNTT02', phone:'0903000444', email:'three@example.com', org:'Cong ty DEF', orgUrl:'https://example.com',avatar:'./assets/team/linh.png', task:'BE chính, dữ liệu.' }
     ];
     const team = rawTeam; 
+
 
     const teamRow = document.getElementById('teamRow');
     function renderTeam(list){
@@ -234,5 +226,18 @@
       const img = e.target.closest('.avatar'); if(!img) return;
       imgZoom.src = img.dataset.zoom; imgModal.show();
     });
+
+    // ====== Demo forms in other tabs (validate + alert) ======
+    function bindSimpleForm(id){
+      const f = document.getElementById(id); if(!f) return;
+      f.addEventListener('submit', (e)=>{
+        e.preventDefault(); e.stopPropagation();
+        if(!f.checkValidity()){ f.classList.add('was-validated'); return; }
+        alert('Đã lưu! (demo)'); f.reset(); f.classList.remove('was-validated');
+      });
+    }
+    bindSimpleForm('userForm');
+    bindSimpleForm('studentMngForm');
+    bindSimpleForm('semesterForm');
   }
 })();

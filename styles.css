@@ -23,7 +23,12 @@
 .avatar{ width:72px; height:72px; object-fit:cover; border-radius:16px; border:1px solid rgba(255,255,255,.15); cursor:pointer; }
 .member-card .list-group-item{ background:transparent; color:#cdd9ff; border-color:rgba(255,255,255,.08); }
 
+/* Sidebar */
+.sidebar-glass{ background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius: 1rem; padding: 1rem; }
+.sidebar-title{ color:#cdd9ff; font-size:.9rem; letter-spacing:.02em; text-transform:uppercase; margin-bottom:.5rem; }
+.nav-pills .nav-link{ color:#dfe7ff; }
+.nav-pills .nav-link:hover{ background: rgba(255,255,255,.08); }
+.nav-pills .nav-link.active{ color:#0b1020; background:linear-gradient(135deg, var(--brand), var(--brand-2)); font-weight:700; }
+
 /* Responsive tweaks */
-@media (max-width: 576px){
-  .table-responsive{ font-size:.92rem; }
-}
+@media (max-width: 576px){ .table-responsive{ font-size:.92rem; } }
