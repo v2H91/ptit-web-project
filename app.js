@@ -182,7 +182,7 @@
     // ====== Team tab (hash all display values) ======
     const rawTeam = [
       { name:'VŨ VĂN HÙNG', dob:'1999-01-01', mssv:'K23DTCN027', class:'KTPM01', phone:'0901000222', email:'one@example.com', org:'Truong Dai Hoc ABC', orgUrl:'https://example.com', avatar:'./assets/team/hung1.jpeg', task:'Leader, kiến trúc & review.' },
-      { name:'NGUYỄN THỊ HỒNG THẮM', dob:'1999-02-02', mssv:'K23DTCN027', class:'KTPM01', phone:'0902000333', email:'two@example.com', org:'Cong ty XYZ', orgUrl:'https://example.com', avatar:'./assets/team/tham.png', task:'FE chính, UI/UX.' },
+      { name:'NGUYỄN THỊ HỒNG THẮM', dob:'1999-02-02', mssv:'K23DTCN054', class:'KTPM01', phone:'0902000333', email:'two@example.com', org:'Cong ty XYZ', orgUrl:'https://example.com', avatar:'./assets/team/tham2.jpg', task:'FE chính, UI/UX.' },
       { name:'NGUYỄN THÀNH ĐÔ', dob:'1999-03-03', mssv:'K23DTCN027', class:'CNTT02', phone:'0903000444', email:'three@example.com', org:'Cong ty DEF', orgUrl:'https://example.com',   avatar:'./assets/team/do.jpg', task:'BE chính, dữ liệu.' },
       { name:'TRẦN THẾ LINH', dob:'1999-03-03', mssv:'K23DTCN027', class:'CNTT02', phone:'0903000444', email:'three@example.com', org:'Cong ty DEF', orgUrl:'https://example.com',avatar:'./assets/team/linh.png', task:'BE chính, dữ liệu.' }
     ];
