@@ -73,10 +73,10 @@
 
     // ====== Quản lý điểm: dataset (hash tất cả text) ======
     const rawStudents = [
-      { code:'SV001', name:'Trần Ngọc Nhận', class:'KTPM01', mid:7.5, final:8.6, conduct:'Tốt' },
-      { code:'SV002', name:'Nguyễn Ngọc Hoàng',   class:'KTPM01', mid:5.0, final:6.2, conduct:'Khá' },
-      { code:'SV003', name:'Trần Thị Ninh',     class:'CNTT02', mid:4.2, final:5.1, conduct:'Trung bình' },
-      { code:'SV004', name:'Pham Quang Trường',   class:'CNTT02', mid:9.0, final:9.2, conduct:'Tốt' }
+      { code:'SV001', name:'Nguyễn Thành Đô', class:'KTPM01', mid:7.5, final:8.6, conduct:'Tốt' },
+      { code:'SV002', name:'Vũ Văn Hùng',   class:'KTPM01', mid:5.0, final:6.2, conduct:'Khá' },
+      { code:'SV003', name:'Nguyễn Thị Hồng Thắm',     class:'CNTT02', mid:4.2, final:5.1, conduct:'Trung bình' },
+      { code:'SV004', name:'Trần Thế Linh',   class:'CNTT02', mid:9.0, final:9.2, conduct:'Tốt' }
     ];
 
     let students = rawStudents;
@@ -183,7 +183,7 @@
     const rawTeam = [
       { name:'VŨ VĂN HÙNG', dob:'1999-01-01', mssv:'K23DTCN027', class:'KTPM01', phone:'0901000222', email:'one@example.com', org:'Truong Dai Hoc ABC', orgUrl:'https://example.com', avatar:'./assets/team/hung1.jpeg', task:'Leader, kiến trúc & review.' },
       { name:'NGUYỄN THỊ HỒNG THẮM', dob:'1999-02-02', mssv:'K23DTCN054', class:'KTPM01', phone:'0902000333', email:'two@example.com', org:'Cong ty XYZ', orgUrl:'https://example.com', avatar:'./assets/team/tham2.jpg', task:'FE chính, UI/UX.' },
-      { name:'NGUYỄN THÀNH ĐÔ', dob:'1999-03-03', mssv:'K23DTCN027', class:'CNTT02', phone:'0903000444', email:'three@example.com', org:'Cong ty DEF', orgUrl:'https://example.com',   avatar:'./assets/team/do.jpg', task:'BE chính, dữ liệu.' },
+      { name:'NGUYỄN THÀNH ĐÔ', dob:'1995-04-04', mssv:'K23DTCN011', class:'CNTT02', phone:'0394795688', email:'nthanhdo7979@gmail.com', org:'Tong cong ty 86', orgUrl:'https://example.com',   avatar:'./assets/team/do1.jpg', task:'BE chính, dữ liệu.' },
       { name:'TRẦN THẾ LINH', dob:'1999-03-03', mssv:'K23DTCN027', class:'CNTT02', phone:'0903000444', email:'three@example.com', org:'Cong ty DEF', orgUrl:'https://example.com',avatar:'./assets/team/linh.png', task:'BE chính, dữ liệu.' }
     ];
     const team = rawTeam; 
