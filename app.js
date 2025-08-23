@@ -308,80 +308,256 @@
   };
 
   // ===== Modal Chi tiết điểm =====
-  const gradeDetailModal = new bootstrap.Modal($("#gradeDetailModal"));
-  const detailTitle = $("#detailTitle");
-  const detailYearPills = $("#detailYearPills");
-  const detailSemPills = $("#detailSemPills");
-  const detailSubjectsBody = $("#detailSubjectsBody");
-  const detailAvg = $("#detailAvg");
+const gradeDetailModal = new bootstrap.Modal($("#gradeDetailModal"));
+const detailTitle        = $("#detailTitle");
+const detailYearPills    = $("#detailYearPills");
+const detailSemPills     = $("#detailSemPills");
+const detailSubjectsBody = $("#detailSubjectsBody");
+const detailAvg          = $("#detailAvg");
 
-  const renderSemesterTable = (sem) => {
-    detailSubjectsBody.innerHTML = "";
-    (sem.subjects || []).forEach((m, idx) => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td>${idx + 1}</td><td>${H(m.code)}</td><td>${H(m.name)}</td><td class="text-center">${Number(m.score).toFixed(2)}</td>`;
-      detailSubjectsBody.appendChild(tr);
+// Form nhập môn
+const gradeForm  = $("#gradeForm");
+const codeInput  = $("#subjectCode");
+const nameInput  = $("#subjectName");
+const scoreInput = $("#subjectScore");
+const addBtn     = $("#addSubjectBtn");
+
+// Chèn nút Xuất Excel (CSV) vào footer nếu chưa có
+const modalFooter = $("#gradeDetailModal .modal-footer");
+let exportBtn = $("#exportExcelBtn");
+if (!exportBtn && modalFooter) {
+  exportBtn = document.createElement("button");
+  exportBtn.id = "exportExcelBtn";
+  exportBtn.type = "button";
+  exportBtn.className = "btn btn-outline-success";
+  exportBtn.innerHTML = `<i class="bi bi-file-earmark-spreadsheet"></i> Xuất Excel`;
+  modalFooter.insertBefore(exportBtn, modalFooter.lastElementChild); // đặt trước nút Lưu
+}
+
+// Cấu hình năm/kỳ
+const YEARS = ["2023", "2024", "2025"];
+const SEMS  = ["1", "2"];
+
+// State modal
+let stuRef = null;
+let curYear = YEARS[0];
+let curSem  = "1";
+
+const toFixed2 = (n) => (Math.round(Number(n) * 100) / 100).toFixed(2);
+
+function getCurrentSemObj() {
+  if (!stuRef.grades[curYear]) stuRef.grades[curYear] = {};
+  if (!stuRef.grades[curYear][curSem]) stuRef.grades[curYear][curSem] = { subjects: [] };
+  if (!Array.isArray(stuRef.grades[curYear][curSem].subjects)) stuRef.grades[curYear][curSem].subjects = [];
+  return stuRef.grades[curYear][curSem];
+}
+
+function recomputeAvg(semObj) {
+  const arr = semObj.subjects || [];
+  if (!arr.length) return "0.00";
+  const sum = arr.reduce((acc, s) => acc + Number(s.score || 0), 0);
+  return toFixed2(sum / arr.length);
+}
+
+function repaintTable() {
+  const semObj = getCurrentSemObj();
+  detailSubjectsBody.innerHTML = "";
+
+  (semObj.subjects || []).forEach((m, idx) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${idx + 1}</td>
+      <td>${H(m.code)}</td>
+      <td>${H(m.name)}</td>
+      <td class="text-center">${toFixed2(m.score)}</td>
+      <td class="text-center">
+        <button type="button" class="btn btn-sm btn-outline-danger" data-index="${idx}">
+          <i class="bi bi-trash"></i>
+        </button>
+      </td>`;
+    detailSubjectsBody.appendChild(tr);
+  });
+
+  // Xoá dòng
+  $$('button[data-index]', detailSubjectsBody).forEach(btn => {
+    on(btn, 'click', () => {
+      const i = Number(btn.dataset.index);
+      getCurrentSemObj().subjects.splice(i, 1);
+      repaintTable();
+      detailAvg.textContent = recomputeAvg(getCurrentSemObj());
     });
-    detailAvg.textContent = semesterAvg(sem).toFixed(2);
-  };
+  });
 
-  const openDetail = (stu) => {
-    ensureStudentGrades(stu);
-    detailTitle.textContent = `${stu.name} • ${stu.code} • ${stu.class}`;
+  detailAvg.textContent = recomputeAvg(getCurrentSemObj());
+}
 
-    const years = ["2023", "2024", "2025"];
-    let curYear = years[0];
-    let curSem = "1";
+function renderYearPills() {
+  detailYearPills.innerHTML = "";
+  YEARS.forEach((y) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "btn btn-outline-light btn-sm me-2 mb-2";
+    if (y === curYear) b.classList.add("active");
+    b.textContent = y;
+    b.dataset.year = y;
+    detailYearPills.appendChild(b);
+  });
 
-    detailYearPills.innerHTML = "";
-    years.forEach((y) => {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.className = "btn btn-outline-light btn-sm";
-      if (y === curYear) b.classList.add("active");
-      b.textContent = y;
-      b.dataset.year = y;
-      detailYearPills.appendChild(b);
-    });
-
-    const renderSemPills = () => {
-      detailSemPills.innerHTML = "";
-      ["1", "2"].forEach((k) => {
-        const b = document.createElement("button");
-        b.type = "button";
-        b.className = "btn btn-outline-info btn-sm";
-        if (k === curSem) b.classList.add("active");
-        b.textContent = `Kỳ ${k}`;
-        b.dataset.sem = k;
-        detailSemPills.appendChild(b);
-      });
-    };
+  detailYearPills.onclick = (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    curYear = b.dataset.year;
+    // nếu muốn giữ kỳ hiện tại khi đổi năm, comment dòng dưới
+    curSem = "1";
+    [...detailYearPills.children].forEach(ch => ch.classList.remove("active"));
+    b.classList.add("active");
     renderSemPills();
-
-    renderSemesterTable(stu.grades[curYear][curSem]);
-
-    detailYearPills.onclick = (e) => {
-      const b = e.target.closest("button");
-      if (!b) return;
-      curYear = b.dataset.year;
-      [...detailYearPills.children].forEach((ch) => ch.classList.remove("active"));
-      b.classList.add("active");
-      curSem = "1";
-      renderSemPills();
-      renderSemesterTable(stu.grades[curYear][curSem]);
-    };
-
-    detailSemPills.onclick = (e) => {
-      const b = e.target.closest("button");
-      if (!b) return;
-      curSem = b.dataset.sem;
-      [...detailSemPills.children].forEach((ch) => ch.classList.remove("active"));
-      b.classList.add("active");
-      renderSemesterTable(stu.grades[curYear][curSem]);
-    };
-
-    gradeDetailModal.show();
+    updateTitle();
+    repaintTable();
   };
+}
+
+function renderSemPills() {
+  detailSemPills.innerHTML = "";
+  SEMS.forEach((k) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "btn btn-outline-info btn-sm me-2 mb-2";
+    if (k === curSem) b.classList.add("active");
+    b.textContent = `Kỳ ${k}`;
+    b.dataset.sem = k;
+    detailSemPills.appendChild(b);
+  });
+
+  detailSemPills.onclick = (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    curSem = b.dataset.sem;
+    [...detailSemPills.children].forEach(ch => ch.classList.remove("active"));
+    b.classList.add("active");
+    updateTitle();
+    repaintTable();
+  };
+}
+
+function updateTitle() {
+  detailTitle.textContent = `${stuRef.name} • ${stuRef.code} • ${stuRef.class} • ${curYear} • Kỳ ${curSem}`;
+}
+
+function addSubject() {
+  if (!gradeForm.checkValidity()) {
+    gradeForm.classList.add("was-validated");
+    return;
+  }
+  const code  = codeInput.value.trim();
+  const name  = nameInput.value.trim();
+  const score = parseFloat(scoreInput.value);
+
+  if (Number.isNaN(score) || score < 0 || score > 10) {
+    scoreInput.setCustomValidity("Điểm phải từ 0 đến 10.");
+    gradeForm.classList.add("was-validated");
+    return;
+  } else {
+    scoreInput.setCustomValidity("");
+  }
+
+  const semObj = getCurrentSemObj();
+  semObj.subjects.push({ code, name, score });
+  repaintTable();
+
+  codeInput.value = "";
+  nameInput.value = "";
+  scoreInput.value = "";
+  codeInput.focus();
+}
+
+on(addBtn, "click", addSubject);
+
+// ===== Xuất Excel (CSV) tất cả năm/kỳ =====
+function exportAllGradesCSV() {
+  if (!stuRef) return;
+
+  // Header
+  const rows = [
+    [`Student Name`, stuRef.name],
+    [`Student Code`, stuRef.code],
+    [`Class`, stuRef.class],
+    [""],
+    ["Year", "Semester", "Subject Code", "Subject Name", "Score"]
+  ];
+
+  YEARS.forEach(y => {
+    // nếu dữ liệu có nhiều năm ngoài YEARS, có thể lấy Object.keys(stuRef.grades)
+    const sems = SEMS;
+    sems.forEach(s => {
+      const semObj = (stuRef.grades?.[y]?.[s]) || { subjects: [] };
+      (semObj.subjects || []).forEach(sub => {
+        rows.push([y, `Kỳ ${s}`, sub.code ?? "", sub.name ?? "", Number(sub.score ?? 0)]);
+      });
+    });
+  });
+
+  // CSV với BOM cho Excel hiểu UTF-8
+  const csv = rows.map(r =>
+    r.map(v => {
+      const t = String(v ?? "");
+      // nếu có dấu phẩy, xuống dòng hoặc dấu " thì bọc trong " và escape "
+      return /[",\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t;
+    }).join(",")
+  ).join("\n");
+
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+  const ts = new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  const fname = `grades_${(stuRef.code || "SV").replace(/\W+/g, "_")}_${ts.getFullYear()}${pad(ts.getMonth()+1)}${pad(ts.getDate())}_${pad(ts.getHours())}${pad(ts.getMinutes())}${pad(ts.getSeconds())}.csv`;
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fname;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+on(exportBtn, "click", exportAllGradesCSV);
+
+// Submit (Lưu) — bắn event ra ngoài cho trang tổng xử lý
+on(gradeForm, "submit", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+
+  const payload = {
+    student: { name: stuRef.name, code: stuRef.code, class: stuRef.class },
+    year: curYear,
+    semester: curSem,
+    subjects: getCurrentSemObj().subjects.map(s => ({ code: s.code, name: s.name, score: Number(s.score) })),
+    average: Number(detailAvg.textContent)
+  };
+
+  window.dispatchEvent(new CustomEvent('gradeModal:save', { detail: payload }));
+  gradeDetailModal.hide();
+});
+
+// Mở modal chi tiết điểm
+const openDetail = (stu) => {
+  ensureStudentGrades(stu);
+  stuRef = stu;
+
+  curYear = YEARS[0];
+  curSem  = "1";
+
+  gradeForm?.reset();
+  gradeForm?.classList.remove("was-validated");
+
+  renderYearPills();
+  renderSemPills();
+  updateTitle();
+  repaintTable();
+
+  gradeDetailModal.show();
+};
 
   // ===== Bảng: click & dblclick =====
   on(tbody, "click", (e) => {

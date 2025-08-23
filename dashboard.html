@@ -321,34 +321,81 @@
     </div>
   </div>
 
-  <!-- MODAL: Chi tiết điểm -->
-  <div class="modal fade" id="gradeDetailModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-      <div class="modal-content bg-dark text-light border-0">
+  <!-- Modal Chi tiết điểm -->
+<div class="modal fade" id="gradeDetailModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content bg-dark text-light border-0">
+      <form id="gradeForm" class="needs-validation" novalidate>
         <div class="modal-header">
-          <h5 class="modal-title"><i class="bi bi-clipboard2-data me-2"></i>Chi tiết điểm • <span id="detailTitle"></span></h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          <h5 class="modal-title">
+            <i class="bi bi-clipboard2-data me-2"></i>
+            Chi tiết điểm • <span id="detailTitle"></span>
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+
         <div class="modal-body">
+          <!-- Năm / Kỳ -->
           <div class="mb-3 d-flex flex-wrap align-items-center gap-2">
             <div id="detailYearPills" class="nav nav-pills"></div>
             <div id="detailSemPills" class="nav nav-pills ms-auto"></div>
           </div>
+
+          <!-- Form nhập môn -->
+          <div class="row g-2 mb-3">
+            <div class="col-12 col-md-3">
+              <label for="subjectCode" class="form-label">Mã môn</label>
+              <input type="text" id="subjectCode" class="form-control form-control-sm bg-dark text-light border-secondary" placeholder="e.g. IT101" required>
+              <div class="invalid-feedback">Vui lòng nhập mã môn.</div>
+            </div>
+            <div class="col-12 col-md-5">
+              <label for="subjectName" class="form-label">Tên môn</label>
+              <input type="text" id="subjectName" class="form-control form-control-sm bg-dark text-light border-secondary" placeholder="Nhập tên môn" required>
+              <div class="invalid-feedback">Vui lòng nhập tên môn.</div>
+            </div>
+            <div class="col-12 col-md-2">
+              <label for="subjectScore" class="form-label">Điểm</label>
+              <input type="number" id="subjectScore" class="form-control form-control-sm bg-dark text-light border-secondary" placeholder="0–10" step="0.01" min="0" max="10" required>
+              <div class="invalid-feedback">Điểm phải từ 0 đến 10.</div>
+            </div>
+            <div class="col-12 col-md-2 d-flex align-items-end">
+              <button type="button" id="addSubjectBtn" class="btn btn-outline-light w-100">
+                <i class="bi bi-plus-lg"></i> Thêm môn
+              </button>
+            </div>
+          </div>
+
+          <!-- Bảng môn -->
           <div class="table-responsive">
-            <table class="table table-dark table-hover align-middle">
+            <table class="table table-dark table-hover align-middle mb-2">
               <thead>
-                <tr><th>#</th><th>Mã môn</th><th>Tên môn</th><th class="text-center">Điểm</th></tr>
+                <tr>
+                  <th>#</th>
+                  <th>Mã môn</th>
+                  <th>Tên môn</th>
+                  <th class="text-center">Điểm</th>
+                  <th class="text-center" style="width:64px;">Xoá</th>
+                </tr>
               </thead>
               <tbody id="detailSubjectsBody"></tbody>
             </table>
           </div>
-          <div class="text-end">
-            <span class="me-2">Điểm TB kỳ:</span> <strong id="detailAvg">0.00</strong>
+
+          <div class="d-flex justify-content-end align-items-center">
+            <span class="me-2">Điểm TB kỳ:</span>
+            <strong id="detailAvg">0.00</strong>
           </div>
         </div>
-      </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Huỷ</button>
+          <button type="submit" class="btn btn-primary">Lưu</button>
+        </div>
+      </form>
     </div>
   </div>
+</div>
+
 
   <!-- MODAL: Zoom ảnh nhóm -->
   <div class="modal fade" id="imgModal" tabindex="-1" aria-hidden="true">
