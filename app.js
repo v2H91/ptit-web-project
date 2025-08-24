@@ -1,9 +1,9 @@
 (function () {
   // ===== Helpers =====
-  const $ = (s, r = document) => r.querySelector(s);
+  const $  = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const on = (el, evt, cb) => el && el.addEventListener(evt, cb);
-  const H = (str) =>
+  const H  = (str) =>
     String(str ?? "")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
@@ -23,14 +23,14 @@
     new bootstrap.Toast(el, { delay: 2200 }).show();
   };
 
-  // ===== Login =====
+  // ===== Login (only on login page) =====
   const form = $("#loginForm");
   if (form) {
-    const btn = $("#submitBtn");
-    const spinner = btn?.querySelector(".spinner-border");
+    const btn      = $("#submitBtn");
+    const spinner  = btn?.querySelector(".spinner-border");
     const btnLabel = btn?.querySelector(".btn-label");
-    const user = $("#username");
-    const pw = $("#password");
+    const user     = $("#username");
+    const pw       = $("#password");
     const togglePw = $("#togglePw");
     const capsHint = $("#capsHint");
 
@@ -41,7 +41,6 @@
       togglePw.firstElementChild.classList.toggle("bi-eye-slash");
       pw.focus();
     });
-
     on(pw, "keyup", (e) => capsHint?.classList.toggle("active", isCapsOn(e)));
 
     on(form, "submit", (e) => {
@@ -73,10 +72,10 @@
         if (btnLabel) btnLabel.textContent = "Đăng nhập";
       }, 600);
     });
-    return; // chỉ chạy khối login trong trang login
+    return; // stop here on login page
   }
 
-  // ===== Route Guard (Dashboard) =====
+  // ===== Route Guard (Dashboard only) =====
   if (!location.pathname.endsWith("dashboard.html")) return;
   const session = localStorage.getItem("demo_session");
   if (!session) {
@@ -94,82 +93,124 @@
     location.replace("index.html");
   });
 
-  // ===== Data / Curriculum =====
-  // === NEW: 3 năm = 6 học kỳ
-  const YEARS = ["2023", "2024", "2025"];
-  const SEMS = ["1", "2"];
-
-  // === NEW: Map (năm,kỳ) -> HK1..HK6
+  // ===== Curriculum & Data =====
+  const YEARS = ["2023", "2024", "2025"]; // 3 năm → 6 kỳ
+  const SEMS  = ["1", "2"];
   const hkLabel = (year, sem) => {
-    const base = (Number(year) - 2023) * 2 + (sem === "1" ? 1 : 2);
-    return `HK${base}`;
+    const n = (Number(year) - 2023) * 2 + (sem === "1" ? 1 : 2);
+    return `HK${n}`;
   };
 
-  // === NEW: CTĐT kèm số tín chỉ (credits)
+  // CTĐT — tín chỉ cố định cho các môn trong chương trình (rút từ ảnh)
   const CURRICULUM = {
+    // Năm 1, HK1
     HK1: [
       { code: "INT11176", name: "Nhập môn Internet và eLearning", credits: 2 },
-      { code: "BAS1150", name: "Triết học Mác–Lênin", credits: 3 },
-      { code: "BAS1201", name: "Đại số", credits: 3 },
-      { code: "BAS1203", name: "Giải tích 1", credits: 3 },
-      { code: "INT1154", name: "Tin học cơ sở 1", credits: 2 },
-      { code: "KNM1", name: "Kỹ năng mềm 1", credits: 1 },
-      { code: "KNM2", name: "Kỹ năng mềm 2", credits: 1 },
-      { code: "KNM3", name: "Kỹ năng mềm 3", credits: 1 },
+      { code: "BAS1150",  name: "Triết học Mác–Lênin",             credits: 3 },
+      { code: "BAS1201",  name: "Đại số",                          credits: 3 },
+      { code: "BAS1203",  name: "Giải tích 1",                     credits: 3 },
+      { code: "INT1154",  name: "Tin học cơ sở 1",                 credits: 2 },
+      { code: "KNM1",     name: "Kỹ năng mềm 1",                   credits: 1 },
+      { code: "KNM2",     name: "Kỹ năng mềm 2",                   credits: 1 },
+      { code: "KNM3",     name: "Kỹ năng mềm 3",                   credits: 1 },
     ],
+    // Năm 1, HK2
     HK2: [
-      { code: "BAS1226", name: "Xác suất thống kê", credits: 2 },
-      { code: "BAS1151", name: "Kinh tế chính trị Mác–Lênin", credits: 2 },
-      { code: "BAS1157", name: "Tiếng Anh (Course 1)", credits: 4 },
-      { code: "BAS1204", name: "Giải tích 2", credits: 3 },
-      { code: "BAS1224", name: "Vật lý 1 và thí nghiệm", credits: 4 },
-      { code: "INT1155", name: "Tin học cơ sở 2", credits: 2 },
-      { code: "ELE1433", name: "Kỹ thuật số", credits: 2 },
+      { code: "BAS1226",  name: "Xác suất thống kê",               credits: 2 },
+      { code: "BAS1151",  name: "Kinh tế chính trị Mác–Lênin",     credits: 2 },
+      { code: "BAS1157",  name: "Tiếng Anh (Course 1)",            credits: 4 },
+      { code: "BAS1204",  name: "Giải tích 2",                     credits: 3 },
+      { code: "BAS1224",  name: "Vật lý 1 và thí nghiệm",          credits: 4 },
+      { code: "INT1155",  name: "Tin học cơ sở 2",                 credits: 2 },
+      { code: "ELE1433",  name: "Kỹ thuật số",                     credits: 2 },
     ],
+    // Năm 2, HK3
     HK3: [
-      { code: "BAS1227", name: "Vật lý 3 và thí nghiệm", credits: 4 },
-      { code: "INT1358", name: "Toán rời rạc 1", credits: 3 },
-      { code: "INT1339", name: "Ngôn ngữ lập trình C++", credits: 3 },
-      { code: "ELE1330", name: "Xử lý tín hiệu số", credits: 2 },
+      { code: "BAS1227",  name: "Vật lý 3 và thí nghiệm",          credits: 4 },
+      { code: "INT1358",  name: "Toán rời rạc 1",                  credits: 3 },
+      { code: "INT1339",  name: "Ngôn ngữ lập trình C++",          credits: 3 },
+      { code: "ELE1330",  name: "Xử lý tín hiệu số",               credits: 2 },
     ],
+    // Năm 2, HK4
     HK4: [
-      { code: "BAS1122", name: "Tư tưởng Hồ Chí Minh", credits: 2 },
-      { code: "BAS1159", name: "Tiếng Anh (Course 3)", credits: 4 },
-      { code: "INT1345", name: "Kiến trúc máy tính", credits: 3 },
-      { code: "INT1359", name: "Toán rời rạc 2", credits: 3 },
-      { code: "INT1306", name: "Cấu trúc dữ liệu và giải thuật", credits: 3 },
-      { code: "ELE1319", name: "Lý thuyết thông tin", credits: 3 },
+      { code: "BAS1122",  name: "Tư tưởng Hồ Chí Minh",            credits: 2 },
+      { code: "BAS1159",  name: "Tiếng Anh (Course 3)",            credits: 4 },
+      { code: "INT1345",  name: "Kiến trúc máy tính",              credits: 3 },
+      { code: "INT1359",  name: "Toán rời rạc 2",                  credits: 3 },
+      { code: "INT1306",  name: "Cấu trúc dữ liệu và giải thuật",  credits: 3 },
+      { code: "ELE1319",  name: "Lý thuyết thông tin",             credits: 3 },
     ],
+    // Năm 3, HK5
     HK5: [
-      { code: "BAS1153", name: "Lịch sử Đảng Cộng sản Việt Nam", credits: 2 },
-      { code: "BAS1160", name: "Tiếng Anh (Course 3 Plus)", credits: 2 },
-      { code: "INT1319", name: "Hệ điều hành", credits: 3 },
-      { code: "INT1332", name: "Lập trình hướng đối tượng", credits: 3 },
-      { code: "INT1313", name: "Cơ sở dữ liệu", credits: 3 },
-      { code: "INT1336", name: "Mạng máy tính", credits: 3 },
-      { code: "INT1362", name: "Lập trình với Python", credits: 3 },
+      { code: "BAS1153",  name: "Lịch sử ĐCSVN",                    credits: 2 },
+      { code: "BAS1160",  name: "Tiếng Anh (Course 3 Plus)",        credits: 2 },
+      { code: "INT1319",  name: "Hệ điều hành",                     credits: 3 },
+      { code: "INT1332",  name: "Lập trình hướng đối tượng",        credits: 3 },
+      { code: "INT1313",  name: "Cơ sở dữ liệu",                    credits: 3 },
+      { code: "INT1336",  name: "Mạng máy tính",                    credits: 3 },
+      { code: "INT1362",  name: "Lập trình với Python",             credits: 3 },
     ],
+    // Năm 3, HK6
     HK6: [
-      { code: "INT1341", name: "Nhập môn trí tuệ nhân tạo", credits: 3 },
-      { code: "INT1340", name: "Nhập môn công nghệ phần mềm", credits: 3 },
-      { code: "INT1303", name: "An toàn & bảo mật HTTT", credits: 3 },
-      { code: "INT1434", name: "Lập trình Web", credits: 3 },
-      { code: "INT14148", name: "Cơ sở dữ liệu phân tán", credits: 3 }, // xác nhận lại mã nếu cần
-      { code: "INT1347", name: "Thực tập cơ sở", credits: 3 },
+      { code: "INT1341",  name: "Nhập môn trí tuệ nhân tạo",        credits: 3 },
+      { code: "INT1340",  name: "Nhập môn công nghệ phần mềm",      credits: 3 },
+      { code: "INT1303",  name: "An toàn và bảo mật HTTT",          credits: 3 },
+      { code: "INT1434",  name: "Lập trình Web",                    credits: 3 },
+      { code: "INT14148", name: "Cơ sở dữ liệu phân tán",           credits: 3 },
+      { code: "INT1347",  name: "Thực tập cơ sở",                   credits: 3 },
     ],
   };
 
-  // === NEW: helper lấy tín chỉ theo HK + mã môn
-  function getCreditsFor(hk, code) {
-    const item = (CURRICULUM[hk] || []).find((m) => m.code === code);
-    return item ? Number(item.credits || 0) : 0;
-  }
+  // ==== INDEX COURSES (GLOBAL) ====
+  // Gom tất cả môn -> tra theo mã (không phụ thuộc HK)
+  const COURSE_INDEX = (() => {
+    const CREDIT = {};
+    const NAME = {};
+    Object.values(CURRICULUM).flat().forEach((m) => {
+      const k = String(m.code || "").toUpperCase();
+      CREDIT[k] = Number(m.credits || 0);
+      NAME[k]   = m.name || "";
+    });
+    return { CREDIT, NAME };
+  })();
+  const getCreditsByCode = (code) =>
+    COURSE_INDEX.CREDIT[String(code || "").toUpperCase()] ?? 0;
+  const getNameByCode = (code) =>
+    COURSE_INDEX.NAME[String(code || "").toUpperCase()] ?? "";
 
-  // === NEW: tạo subjects từ CTĐT (mặc định score=0)
+  // === Index theo TÊN để auto-fill 2 chiều ===
+  const normalizeName = (s) =>
+    s ? s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/\s+/g,' ') : '';
+  const NAME2CODE = (() => {
+    const m = {};
+    Object.values(CURRICULUM).flat().forEach((mo) => {
+      const k = normalizeName(mo.name);
+      if (k && !m[k]) m[k] = mo.code; // giữ bản đầu tiên nếu trùng tên
+    });
+    return m;
+  })();
+  const findCourseByName = (q) => {
+    const k = normalizeName(q);
+    if (!k) return null;
+    if (NAME2CODE[k]) {
+      const code = NAME2CODE[k];
+      return { code, name: getNameByCode(code), credits: getCreditsByCode(code) };
+    }
+    const all = Object.values(CURRICULUM).flat();
+    const pref = all.find((m) => normalizeName(m.name).startsWith(k));
+    if (pref) return { code: pref.code, name: pref.name, credits: pref.credits };
+    const any = all.find((m) => normalizeName(m.name).includes(k));
+    if (any) return { code: any.code, name: any.name, credits: any.credits };
+    return null;
+  };
+
+  // phát sinh danh sách môn theo HK (điểm = 0)
   const subjectsForHK = (hk) =>
-    (CURRICULUM[hk] || []).map((m) => ({ code: m.code, name: m.name, credits: m.credits, score: 0 }));
+    (CURRICULUM[hk] || []).map((m) => ({
+      code: m.code, name: m.name, credits: m.credits, score: 0,
+    }));
 
-  // (tuỳ chọn) ĐTB theo tín chỉ – để false theo yêu cầu hiện tại
+  // ĐTB theo tín chỉ? bật = true nếu muốn
   const WEIGHTED_BY_CREDITS = false;
 
   const makeGrades = () => {
@@ -184,24 +225,23 @@
     return grades;
   };
 
+  // ===== Seed data =====
   const rawStudents = [
-    { code: "SV001", name: "Nguyễn Thành Đô", class: "KTPM01", conduct: "Tốt", grades: makeGrades() },
-    { code: "SV002", name: "Vũ Văn Hùng", class: "KTPM01", conduct: "Khá", grades: makeGrades() },
-    { code: "SV003", name: "Nguyễn Thị Hồng Thắm", class: "CNTT02", conduct: "Trung bình", grades: makeGrades() },
-    { code: "SV004", name: "Trần Thế Linh", class: "CNTT02", conduct: "Tốt", grades: makeGrades() },
+    { code: "SV001", name: "Nguyễn Thành Đô",     class: "KTPM01", conduct: "Tốt",        grades: makeGrades() },
+    { code: "SV002", name: "Vũ Văn Hùng",         class: "KTPM01", conduct: "Khá",        grades: makeGrades() },
+    { code: "SV003", name: "Nguyễn Thị Hồng Thắm",class: "CNTT02", conduct: "Trung bình", grades: makeGrades() },
+    { code: "SV004", name: "Trần Thế Linh",       class: "CNTT02", conduct: "Tốt",        grades: makeGrades() },
   ];
 
   // ===== Storage =====
   const LS_KEY_CLASSES = "demo_classes";
-  const LS_KEY_OLD = "demo_students";
+  const LS_KEY_OLD     = "demo_students";
 
   const loadClasses = () => {
     try {
       const s = localStorage.getItem(LS_KEY_CLASSES);
       return s ? JSON.parse(s) : null;
-    } catch {
-      return null;
-    }
+    } catch { return null; }
   };
   const saveClasses = () => localStorage.setItem(LS_KEY_CLASSES, JSON.stringify(classes));
 
@@ -228,6 +268,38 @@
     saveClasses();
   }
 
+  // đảm bảo SV có đủ môn theo CTĐT & đồng bộ tín chỉ cố định (nếu là môn trong CTĐT)
+  const ensureStudentGrades = (stu) => {
+    if (!stu.grades) stu.grades = makeGrades();
+    YEARS.forEach((y) => {
+      if (!stu.grades[y]) stu.grades[y] = {};
+      SEMS.forEach((s) => {
+        const hk = hkLabel(y, s);
+        if (!stu.grades[y][s]) stu.grades[y][s] = { subjects: [] };
+        if (!Array.isArray(stu.grades[y][s].subjects)) stu.grades[y][s].subjects = [];
+
+        const list  = stu.grades[y][s].subjects;
+        const byCode = new Map(list.map((m) => [String(m.code).toUpperCase(), m]));
+
+        // thêm môn còn thiếu theo CTĐT
+        (CURRICULUM[hk] || []).forEach((m) => {
+          const key = String(m.code).toUpperCase();
+          if (!byCode.has(key)) {
+            list.push({ code: m.code, name: m.name, credits: m.credits, score: 0 });
+          } else {
+            const row = byCode.get(key);
+            // cập nhật tín chỉ & tên cố định nếu là môn trong CTĐT
+            const fixed = getCreditsByCode(row.code);
+            if (fixed) row.credits = fixed;
+            if (!row.name) row.name = getNameByCode(row.code) || m.name;
+          }
+        });
+      });
+    });
+  };
+  Object.values(classes).forEach((arr) => arr.forEach(ensureStudentGrades));
+  saveClasses();
+
   // ===== Domain =====
   const semesterAvg = (sem) => {
     const arr = sem?.subjects || [];
@@ -235,76 +307,31 @@
     if (!WEIGHTED_BY_CREDITS) return avg(arr.map((x) => Number(x.score || 0)));
     const wsum = arr.reduce((a, b) => a + Number(b.score || 0) * Number(b.credits || 0), 0);
     const csum = arr.reduce((a, b) => a + Number(b.credits || 0), 0);
-    if (!csum) return 0;
-    return Math.round((wsum / csum) * 100) / 100;
+    return csum ? Math.round((wsum / csum) * 100) / 100 : 0;
   };
 
   const studentOverallAvg = (stu) => {
     const sems = [];
-    Object.keys(stu.grades || {}).forEach((y) => {
-      ["1", "2"].forEach((k) => sems.push(stu.grades?.[y]?.[k]));
-    });
-    const vals = sems.map(semesterAvg).filter((v) => !Number.isNaN(v));
-    return avg(vals);
+    Object.keys(stu.grades || {}).forEach((y) => ["1","2"].forEach((k) => sems.push(stu.grades?.[y]?.[k])));
+    return avg(sems.map(semesterAvg));
   };
 
   const ensureClassExists = (cls) => (classes[cls] ??= []);
 
-  const ensureStudentGrades = (stu) => {
-    if (!stu.grades) stu.grades = makeGrades();
-    YEARS.forEach((y) => {
-      if (!stu.grades[y]) stu.grades[y] = {};
-      SEMS.forEach((s) => {
-        if (!stu.grades[y][s]) stu.grades[y][s] = { subjects: [] };
-        if (!Array.isArray(stu.grades[y][s].subjects)) stu.grades[y][s].subjects = [];
-      });
-    });
-  };
-
-  // === NEW: đồng bộ chương trình (điền môn thiếu & khoá credits theo CTĐT)
-  function fillCurriculumForStudent(stu) {
-    YEARS.forEach((y) => {
-      SEMS.forEach((s) => {
-        const hk = hkLabel(y, s);
-        const sem = stu.grades?.[y]?.[s];
-        if (!sem) return;
-        if (!Array.isArray(sem.subjects)) sem.subjects = [];
-        const byCode = new Map(sem.subjects.map((x) => [x.code, x]));
-        (CURRICULUM[hk] || []).forEach((m) => {
-          if (!byCode.has(m.code)) {
-            sem.subjects.push({ code: m.code, name: m.name, credits: m.credits, score: 0 });
-          } else {
-            const row = byCode.get(m.code);
-            row.name = row.name || m.name;
-            row.credits = m.credits; // tín chỉ cố định
-          }
-        });
-      });
-    });
-  }
-
-  // Đồng bộ dữ liệu hiện có
-  Object.values(classes).forEach((list) =>
-    list.forEach((stu) => {
-      ensureStudentGrades(stu);
-      fillCurriculumForStudent(stu);
-    })
-  );
-  saveClasses();
-
   // ===== State & Refs =====
   let currentClass = null;
-  const classList = $("#classList");
+  const classList        = $("#classList");
   const currentClassName = $("#currentClassName");
-  const tbody = $("#studentBody");
-  const statCount = $("#statCount");
-  const statAvg = $("#statAvg");
-  const statGood = $("#statGood");
-  const statWarn = $("#statWarn");
-  const searchBox = $("#searchBox");
+  const tbody            = $("#studentBody");
+  const statCount        = $("#statCount");
+  const statAvg          = $("#statAvg");
+  const statGood         = $("#statGood");
+  const statWarn         = $("#statWarn");
+  const searchBox        = $("#searchBox");
 
-  // ===== Render: Lớp =====
+  // ===== Render: Lớp & SV =====
   const updateHeader = () => currentClassName && (currentClassName.textContent = currentClass || "(chưa chọn)");
+
   const renderClassList = () => {
     if (!classList) return;
     classList.innerHTML = "";
@@ -322,16 +349,15 @@
     updateHeader();
   };
 
-  // ===== Render: Bảng tổng =====
   const updateStats = (list) => {
-    const count = list.length;
+    const count  = list.length;
     const avgAll = count ? avg(list.map(studentOverallAvg)) : 0;
-    const good = list.filter((s) => s.conduct === "Tốt").length;
-    const warn = list.filter((s) => studentOverallAvg(s) < 5).length;
+    const good   = list.filter((s) => s.conduct === "Tốt").length;
+    const warn   = list.filter((s) => studentOverallAvg(s) < 5).length;
     statCount.textContent = count;
-    statAvg.textContent = avgAll.toFixed(2);
-    statGood.textContent = good;
-    statWarn.textContent = warn;
+    statAvg.textContent   = avgAll.toFixed(2);
+    statGood.textContent  = good;
+    statWarn.textContent  = warn;
   };
 
   const renderTable = (list) => {
@@ -354,18 +380,14 @@
     });
     updateStats(list);
   };
-
   const renderTableByClass = () => renderTable(currentClass ? classes[currentClass] || [] : []);
 
-  // ===== Tìm kiếm =====
+  // ===== Search =====
   on(searchBox, "input", () => {
     const q = searchBox.value.trim().toLowerCase();
     const list = currentClass ? classes[currentClass] || [] : [];
     const filtered = list.filter(
-      (s) =>
-        s.name.toLowerCase().includes(q) ||
-        s.class.toLowerCase().includes(q) ||
-        s.code.toLowerCase().includes(q)
+      (s) => s.name.toLowerCase().includes(q) || s.class.toLowerCase().includes(q) || s.code.toLowerCase().includes(q)
     );
     renderTable(filtered);
   });
@@ -375,17 +397,16 @@
     const btn = e.target.closest("button");
     if (!btn?.dataset.cls) return;
     currentClass = btn.dataset.cls;
-    renderClassList();
-    renderTableByClass();
+    renderClassList(); renderTableByClass();
     if (searchBox) searchBox.value = "";
   });
 
   // ===== Modal SV =====
   const studentModal = new bootstrap.Modal($("#studentModal"));
-  const studentForm = $("#studentForm");
-  const idxEl = $("#idx");
-  const svName = $("#svName");
-  const svCode = $("#svCode");
+  const studentForm  = $("#studentForm");
+  const idxEl   = $("#idx");
+  const svName  = $("#svName");
+  const svCode  = $("#svCode");
   const svClass = $("#svClass");
   const svConduct = $("#svConduct");
   const modalTitle = $("#modalTitle");
@@ -404,10 +425,7 @@
     modalTitle.textContent = "Sửa sinh viên";
     const s = (classes[currentClass] || [])[i];
     idxEl.value = i;
-    svName.value = s.name;
-    svCode.value = s.code;
-    svClass.value = s.class;
-    svConduct.value = s.conduct;
+    svName.value = s.name; svCode.value = s.code; svClass.value = s.class; svConduct.value = s.conduct;
     studentForm.classList.remove("was-validated");
     svName?.focus();
     studentModal.show();
@@ -415,20 +433,21 @@
 
   // ===== Modal Chi tiết điểm =====
   const gradeDetailModal = new bootstrap.Modal($("#gradeDetailModal"));
-  const detailTitle = $("#detailTitle");
-  const detailYearPills = $("#detailYearPills");
-  const detailSemPills = $("#detailSemPills");
+  const detailTitle        = $("#detailTitle");
+  const detailYearPills    = $("#detailYearPills");
+  const detailSemPills     = $("#detailSemPills");
   const detailSubjectsBody = $("#detailSubjectsBody");
-  const detailAvg = $("#detailAvg");
+  const detailAvg          = $("#detailAvg");
 
   // Form nhập môn
-  const gradeForm = $("#gradeForm");
-  const codeInput = $("#subjectCode");
-  const nameInput = $("#subjectName");
-  const scoreInput = $("#subjectScore");
-  const addBtn = $("#addSubjectBtn");
+  const gradeForm    = $("#gradeForm");
+  const codeInput    = $("#subjectCode");
+  const nameInput    = $("#subjectName");
+  const creditsInput = $("#subjectCredits"); // cho phép nhập tay
+  const scoreInput   = $("#subjectScore");
+  const addBtn       = $("#addSubjectBtn");
 
-  // Chèn nút Xuất Excel (CSV) nếu chưa có
+  // Export CSV button
   const modalFooter = $("#gradeDetailModal .modal-footer");
   let exportBtn = $("#exportExcelBtn");
   if (!exportBtn && modalFooter) {
@@ -443,7 +462,8 @@
   // State modal
   let stuRef = null;
   let curYear = YEARS[0];
-  let curSem = "1";
+  let curSem  = "1";
+  let creditsManuallyEdited = false;
 
   const toFixed2 = (n) => (Math.round(Number(n) * 100) / 100).toFixed(2);
 
@@ -454,12 +474,8 @@
     return stuRef.grades[curYear][curSem];
   }
 
-  function recomputeAvg(semObj) {
-    if (!semObj) return "0.00";
-    return toFixed2(semesterAvg(semObj));
-  }
+  const recomputeAvg = (semObj) => toFixed2(semesterAvg(semObj || getCurrentSemObj()));
 
-  // === NEW: vẽ bảng có cột "Số TC" (không sửa), cột "Điểm" inline edit
   function repaintTable() {
     const semObj = getCurrentSemObj();
     detailSubjectsBody.innerHTML = "";
@@ -482,16 +498,16 @@
 
     // Xoá dòng
     $$('button[data-index]', detailSubjectsBody).forEach((btn) => {
-      on(btn, 'click', () => {
+      on(btn, "click", () => {
         const i = Number(btn.dataset.index);
         getCurrentSemObj().subjects.splice(i, 1);
         repaintTable();
-        detailAvg.textContent = recomputeAvg(getCurrentSemObj());
+        detailAvg.textContent = recomputeAvg();
         saveClasses();
       });
     });
 
-    detailAvg.textContent = recomputeAvg(getCurrentSemObj());
+    detailAvg.textContent = recomputeAvg();
   }
 
   function renderYearPills() {
@@ -510,12 +526,15 @@
       const b = e.target.closest("button");
       if (!b) return;
       curYear = b.dataset.year;
-      curSem = "1";
+      curSem  = "1";
       [...detailYearPills.children].forEach((ch) => ch.classList.remove("active"));
       b.classList.add("active");
       renderSemPills();
       updateTitle();
       repaintTable();
+      creditsManuallyEdited = false;
+      updateFromCode();
+      updateFromName();
     };
   }
 
@@ -539,46 +558,93 @@
       b.classList.add("active");
       updateTitle();
       repaintTable();
+      creditsManuallyEdited = false;
+      updateFromCode();
+      updateFromName();
     };
   }
 
   function updateTitle() {
-    detailTitle.textContent = `${stuRef.name} • ${stuRef.code} • ${stuRef.class} • ${curYear} • Kỳ ${curSem} • ${hkLabel(curYear, curSem)}`;
+    detailTitle.textContent =
+      `${stuRef.name} • ${stuRef.code} • ${stuRef.class} • ${curYear} • Kỳ ${curSem} • ${hkLabel(curYear, curSem)}`;
   }
+
+  // Auto-fill hai chiều
+  function updateFromCode() {
+    const code = (codeInput?.value || "").trim().toUpperCase();
+    if (!code) { if (!creditsManuallyEdited) creditsInput.value = ""; return; }
+    const fixedCredits = getCreditsByCode(code);
+    if (!creditsManuallyEdited || creditsInput.value === "" || Number(creditsInput.value) === 0) {
+      if (fixedCredits) creditsInput.value = fixedCredits;
+    }
+    if (!nameInput.value.trim()) {
+      const n = getNameByCode(code);
+      if (n) nameInput.value = n;
+    }
+  }
+  function updateFromName() {
+    const hit = findCourseByName(nameInput?.value || "");
+    if (!hit) return;
+    const curr = (codeInput.value || "").trim().toUpperCase();
+    if (!curr || !COURSE_INDEX.NAME[curr]) {
+      codeInput.value = hit.code;
+    }
+    if (!creditsManuallyEdited || creditsInput.value === "" || Number(creditsInput.value) === 0) {
+      creditsInput.value = hit.credits || "";
+    }
+  }
+  on(codeInput, "input", updateFromCode);
+  on(nameInput, "input", () => {
+    if ((nameInput.value || "").trim().length >= 3) updateFromName();
+  });
+  on(nameInput, "blur", updateFromName);
+  on(creditsInput, "input", () => { creditsManuallyEdited = true; });
 
   function addSubject() {
     if (!gradeForm.checkValidity()) {
       gradeForm.classList.add("was-validated");
       return;
     }
-    const code = codeInput.value.trim();
-    const name = nameInput.value.trim();
+
+    let code  = codeInput.value.trim().toUpperCase();
+    let name  = nameInput.value.trim();
     const score = parseFloat(scoreInput.value);
+
+    // cho phép điền 1 phía
+    if (!code && name) {
+      const hit = findCourseByName(name);
+      if (hit) {
+        code = hit.code;
+        if (!creditsManuallyEdited && (creditsInput.value === "" || Number(creditsInput.value) === 0)) {
+          creditsInput.value = hit.credits || "";
+        }
+      }
+    }
+    if (!name && code) name = getNameByCode(code) || "";
 
     if (Number.isNaN(score) || score < 0 || score > 10) {
       scoreInput.setCustomValidity("Điểm phải từ 0 đến 10.");
       gradeForm.classList.add("was-validated");
       return;
-    } else {
-      scoreInput.setCustomValidity("");
-    }
+    } else scoreInput.setCustomValidity("");
 
-    const semObj = getCurrentSemObj();
-    const hk = hkLabel(curYear, curSem);
-    const credits = getCreditsFor(hk, code); // tự lấy theo CTĐT (0 nếu không có)
+    const semObj  = getCurrentSemObj();
+    const credits = creditsInput.value !== "" ? Number(creditsInput.value)
+                                              : (code ? getCreditsByCode(code) : 0);
 
     semObj.subjects.push({ code, name, credits, score });
     repaintTable();
     saveClasses();
 
-    codeInput.value = "";
-    nameInput.value = "";
-    scoreInput.value = "";
+    // clear form
+    gradeForm.classList.remove("was-validated");
+    codeInput.value = ""; nameInput.value = ""; creditsInput.value = ""; scoreInput.value = "";
+    creditsManuallyEdited = false;
     codeInput.focus();
   }
   on(addBtn, "click", addSubject);
 
-  // === NEW: Inline edit cho cột Điểm (Enter lưu, Esc huỷ)
+  // Inline edit: cột điểm
   on(detailSubjectsBody, "focusin", (e) => {
     const cell = e.target.closest("[contenteditable][data-edit='score']");
     if (!cell) return;
@@ -588,7 +654,7 @@
     const cell = e.target.closest("[contenteditable][data-edit='score']");
     if (!cell) return;
     if (e.key === "Enter") { e.preventDefault(); cell.blur(); }
-    if (e.key === "Escape") { e.preventDefault(); cell.textContent = cell.dataset.old || ""; cell.blur(); }
+    if (e.key === "Escape"){ e.preventDefault(); cell.textContent = cell.dataset.old || ""; cell.blur(); }
   });
   on(detailSubjectsBody, "focusout", (e) => {
     const cell = e.target.closest("[contenteditable][data-edit='score']");
@@ -610,95 +676,76 @@
     saveClasses();
   });
 
-  // ===== Xuất Excel (CSV)
+  // Xuất CSV (toàn bộ năm/kỳ)
   function exportAllGradesCSV() {
     if (!stuRef) return;
 
     const rows = [
       ["Student Name", stuRef.name],
       ["Student Code", stuRef.code],
-      ["Class", stuRef.class],
+      ["Class",        stuRef.class],
       [""],
-      ["Year", "Semester", "HK", "Subject Code", "Subject Name", "Credits", "Score"],
+      ["Year","Semester","HK","Subject Code","Subject Name","Credits","Score"],
     ];
 
     YEARS.forEach((y) => {
       SEMS.forEach((s) => {
         const semObj = stuRef.grades?.[y]?.[s] || { subjects: [] };
         (semObj.subjects || []).forEach((sub) => {
-          rows.push([y, s, hkLabel(y, s), sub.code ?? "", sub.name ?? "", Number(sub.credits ?? 0), Number(sub.score ?? 0)]);
+          rows.push([ y, s, hkLabel(y,s), sub.code ?? "", sub.name ?? "", Number(sub.credits ?? 0), Number(sub.score ?? 0) ]);
         });
       });
     });
 
-    const csv = rows
-      .map((r) =>
-        r
-          .map((v) => {
-            const t = String(v ?? "");
-            return /[",\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t;
-          })
-          .join(",")
-      )
-      .join("\n");
+    const csv = rows.map(r =>
+      r.map(v => {
+        const t = String(v ?? "");
+        return /[",\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t;
+      }).join(",")
+    ).join("\n");
 
     const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
     const ts = new Date();
-    const pad = (n) => String(n).padStart(2, "0");
-    const fname = `grades_${(stuRef.code || "SV").replace(/\W+/g, "_")}_${ts.getFullYear()}${pad(
-      ts.getMonth() + 1
-    )}${pad(ts.getDate())}_${pad(ts.getHours())}${pad(ts.getMinutes())}${pad(ts.getSeconds())}.csv`;
+    const pad = (n) => String(n).padStart(2,"0");
+    const fname = `grades_${(stuRef.code || "SV").replace(/\W+/g,"_")}_${ts.getFullYear()}${pad(ts.getMonth()+1)}${pad(ts.getDate())}_${pad(ts.getHours())}${pad(ts.getMinutes())}${pad(ts.getSeconds())}.csv`;
 
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url;
-    a.download = fname;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    a.href = url; a.download = fname;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
   }
-
   on(exportBtn, "click", exportAllGradesCSV);
 
-  // Submit (Lưu) — bắn event ra ngoài cho trang tổng xử lý
+  // Submit (Lưu)
   on(gradeForm, "submit", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
+    e.preventDefault(); e.stopPropagation();
     const payload = {
       student: { name: stuRef.name, code: stuRef.code, class: stuRef.class },
-      year: curYear,
-      semester: curSem,
-      subjects: getCurrentSemObj().subjects.map((s) => ({ code: s.code, name: s.name, credits: Number(s.credits || 0), score: Number(s.score) })),
-      average: Number(detailAvg.textContent),
+      year: curYear, semester: curSem,
+      subjects: getCurrentSemObj().subjects.map(s => ({
+        code: s.code, name: s.name, credits: Number(s.credits || 0), score: Number(s.score)
+      })),
+      average: Number(detailAvg.textContent)
     };
-
     window.dispatchEvent(new CustomEvent("gradeModal:save", { detail: payload }));
     gradeDetailModal.hide();
   });
 
-  // Mở modal chi tiết điểm
+  // Mở modal chi tiết
   const openDetail = (stu) => {
     ensureStudentGrades(stu);
-    fillCurriculumForStudent(stu);
     stuRef = stu;
-
-    curYear = YEARS[0];
-    curSem = "1";
-
-    gradeForm?.reset();
-    gradeForm?.classList.remove("was-validated");
-
-    renderYearPills();
-    renderSemPills();
-    updateTitle();
-    repaintTable();
-
+    curYear = YEARS[0]; curSem = "1";
+    gradeForm?.reset(); gradeForm?.classList.remove("was-validated");
+    renderYearPills(); renderSemPills(); updateTitle(); repaintTable();
+    creditsManuallyEdited = false;
+    updateFromCode();
+    updateFromName();
     gradeDetailModal.show();
   };
 
-  // ===== Bảng: click & dblclick =====
+  // Bảng SV: click & dblclick
   on(tbody, "click", (e) => {
     const btn = e.target.closest("button");
     if (!btn) return;
@@ -706,16 +753,12 @@
     const i = Number(btn.dataset.idx);
     if (!currentClass) return showToast("Hãy chọn lớp trước");
 
-    if (act === "view") {
-      openDetail(classes[currentClass][i]);
-    } else if (act === "edit") {
-      openEdit(i);
-    } else if (act === "del") {
+    if (act === "view") openDetail(classes[currentClass][i]);
+    else if (act === "edit") openEdit(i);
+    else if (act === "del") {
       if (confirm("Xóa sinh viên này?")) {
         classes[currentClass].splice(i, 1);
-        saveClasses();
-        renderClassList();
-        renderTableByClass();
+        saveClasses(); renderClassList(); renderTableByClass();
         showToast("Đã xóa sinh viên");
       }
     }
@@ -729,10 +772,9 @@
     if (idx >= 0) openDetail(classes[currentClass][idx]);
   });
 
-  // ===== Submit form SV =====
+  // Submit form SV (add/edit)
   on(studentForm, "submit", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); e.stopPropagation();
     if (!studentForm.checkValidity()) {
       studentForm.classList.add("was-validated");
       return;
@@ -747,14 +789,11 @@
 
     ensureClassExists(data.class);
     ensureStudentGrades(data);
-    fillCurriculumForStudent(data);
 
     const i = $("#idx").value;
-
     if (i === "") {
       if (classes[data.class].some((s) => s.code === data.code)) {
-        showToast("Mã SV đã tồn tại trong lớp này");
-        return;
+        showToast("Mã SV đã tồn tại trong lớp này"); return;
       }
       classes[data.class].push(data);
       currentClass = data.class;
@@ -763,14 +802,11 @@
       const oldList = classes[currentClass] || [];
       const old = oldList[Number(i)];
       const oldClass = old.class;
-
       if (data.class !== oldClass || data.code !== old.code) {
         if (classes[data.class].some((s) => s.code === data.code)) {
-          showToast("Mã SV đã tồn tại trong lớp mới");
-          return;
+          showToast("Mã SV đã tồn tại trong lớp mới"); return;
         }
       }
-
       if (data.class !== oldClass) {
         oldList.splice(Number(i), 1);
         classes[data.class].push(Object.assign(old, data));
@@ -782,18 +818,17 @@
     }
 
     saveClasses();
-    renderClassList();
-    renderTableByClass();
+    renderClassList(); renderTableByClass();
     studentModal.hide();
     if (searchBox) searchBox.value = "";
   });
 
   // ===== Team (demo) =====
   const team = [
-    { name: "VŨ VĂN HÙNG", dob: "1999-01-01", mssv: "K23DTCN027", class: "KTPM01", phone: "0901000222", email: "one@example.com", org: "Truong Dai Hoc ABC", orgUrl: "https://example.com", avatar: "./assets/team/hung1.jpeg", task: "Leader, kiến trúc & review." },
-    { name: "NGUYỄN THỊ HỒNG THẮM", dob: "1999-02-02", mssv: "K23DTCN054", class: "KTPM01", phone: "0902000333", email: "two@example.com", org: "Cong ty XYZ", orgUrl: "https://example.com", avatar: "./assets/team/tham2.jpg", task: "FE chính, UI/UX." },
-    { name: "NGUYỄN THÀNH ĐÔ", dob: "1995-04-04", mssv: "K23DTCN011", class: "CNTT02", phone: "0394795688", email: "nthanhdo7979@gmail.com", org: "Tong cong ty 86", orgUrl: "https://example.com", avatar: "./assets/team/do1.jpg", task: "BE chính, dữ liệu." },
-    { name: "TRẦN THẾ LINH", dob: "1999-03-03", mssv: "K23DTCN027", class: "CNTT02", phone: "0903000444", email: "three@example.com", org: "Cong ty DEF", orgUrl: "https://example.com", avatar: "./assets/team/linh.png", task: "BE chính, dữ liệu." },
+    { name:"VŨ VĂN HÙNG", dob:"1999-01-01", mssv:"K23DTCN027", class:"KTPM01", phone:"0901000222", email:"one@example.com",   org:"Truong Dai Hoc ABC", orgUrl:"https://example.com", avatar:"./assets/team/hung1.jpeg", task:"Leader, kiến trúc & review." },
+    { name:"NGUYỄN THỊ HỒNG THẮM", dob:"1999-02-02", mssv:"K23DTCN054", class:"KTPM01", phone:"0902000333", email:"two@example.com",   org:"Cong ty XYZ",       orgUrl:"https://example.com", avatar:"./assets/team/tham2.jpg", task:"FE chính, UI/UX." },
+    { name:"NGUYỄN THÀNH ĐÔ", dob:"1995-04-04", mssv:"K23DTCN011", class:"CNTT02", phone:"0394795688", email:"nthanhdo7979@gmail.com", org:"Tong cong ty 86",    orgUrl:"https://example.com", avatar:"./assets/team/do1.jpg",   task:"BE chính, dữ liệu." },
+    { name:"TRẦN THẾ LINH", dob:"1999-03-03", mssv:"K23DTCN027", class:"CNTT02", phone:"0903000444", email:"three@example.com",       org:"Cong ty DEF",       orgUrl:"https://example.com", avatar:"./assets/team/linh.png",  task:"BE chính, dữ liệu." },
   ];
 
   const teamRow = $("#teamRow");
@@ -826,7 +861,7 @@
     });
 
     const imgModal = new bootstrap.Modal($("#imgModal"));
-    const imgZoom = $("#imgZoom");
+    const imgZoom  = $("#imgZoom");
     on(teamRow, "click", (e) => {
       const img = e.target.closest(".avatar");
       if (!img) return;

@@ -4,32 +4,41 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dashboard • Quản lý điểm SV</title>
+
+  <!-- CSS libs -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+  <!-- App styles -->
   <link rel="stylesheet" href="styles.css" />
-  <style>
-    /* NEW: căn cột trong bảng môn của modal */
-    .tbl-subjects th, .tbl-subjects td { vertical-align: middle; }
-    .tbl-subjects .col-credits { width: 72px; }
-    .tbl-subjects .col-score   { width: 72px; }
-    .tbl-subjects .col-actions { width: 64px; }
-  </style>
 </head>
 <body class="bg-app">
   <!-- NAVBAR -->
   <nav class="navbar navbar-expand-lg navbar-dark navbar-blur">
     <div class="container-fluid">
       <div class="d-flex gap-2 align-items-center">
-        <button class="btn btn-outline-light d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sideNav" aria-controls="sideNav" aria-expanded="false"><i class="bi bi-layout-sidebar"></i></button>
+        <button class="btn btn-outline-light d-md-none" type="button"
+                data-bs-toggle="collapse" data-bs-target="#sideNav"
+                aria-controls="sideNav" aria-expanded="false">
+          <i class="bi bi-layout-sidebar"></i>
+        </button>
         <a class="navbar-brand" href="#"><span class="brand-badge me-2">A</span>Demo App</a>
       </div>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNav" aria-controls="topNav" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+              data-bs-target="#topNav" aria-controls="topNav" aria-expanded="false"
+              aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="topNav">
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-          <li class="nav-item d-flex align-items-center me-3 text-white-50">Xin chào, <strong class="ms-1" data-username>user</strong></li>
-          <li class="nav-item"><button id="btnLogout" class="btn btn-outline-light btn-sm"><i class="bi bi-box-arrow-right me-1"></i>Đăng xuất</button></li>
+          <li class="nav-item d-flex align-items-center me-3 text-white-50">
+            Xin chào, <strong class="ms-1" data-username>user</strong>
+          </li>
+          <li class="nav-item">
+            <button id="btnLogout" class="btn btn-outline-light btn-sm">
+              <i class="bi bi-box-arrow-right me-1"></i>Đăng xuất
+            </button>
+          </li>
         </ul>
       </div>
     </div>
@@ -43,13 +52,25 @@
         <div id="sideNav" class="sidebar-glass collapse d-md-block sticky-md-top">
           <div class="sidebar-title">Chức năng</div>
           <div class="nav nav-pills flex-column gap-1" role="tablist" aria-orientation="vertical">
-            <button class="nav-link active text-start" data-bs-toggle="pill" data-bs-target="#tab-grade" type="button" role="tab"><i class="bi bi-journal-check me-2"></i>Quản lý điểm</button>
-            <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#tab-users" type="button" role="tab"><i class="bi bi-person-gear me-2"></i>Quản lý user</button>
-            <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#tab-students" type="button" role="tab"><i class="bi bi-mortarboard me-2"></i>Quản lý sinh viên</button>
-            <button class="nav-link text-vang" data-bs-toggle="pill" data-bs-target="#tab-semesters" type="button" role="tab"><i class="bi bi-calendar3 me-2"></i>Học kỳ</button>
+            <button class="nav-link active text-start" data-bs-toggle="pill" data-bs-target="#tab-grade" type="button" role="tab">
+              <i class="bi bi-journal-check me-2"></i>Quản lý điểm
+            </button>
+            <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#tab-users" type="button" role="tab">
+              <i class="bi bi-person-gear me-2"></i>Quản lý user
+            </button>
+            <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#tab-students" type="button" role="tab">
+              <i class="bi bi-mortarboard me-2"></i>Quản lý sinh viên
+            </button>
+            <button class="nav-link text-vang text-start" data-bs-toggle="pill" data-bs-target="#tab-semesters" type="button" role="tab">
+              <i class="bi bi-calendar3 me-2"></i>Học kỳ
+            </button>
             <hr class="my-2 opacity-25">
-            <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#tab-team" type="button" role="tab"><i class="bi bi-people me-2"></i>Thông tin nhóm</button>
-            <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#tab-about" type="button" role="tab"><i class="bi bi-info-circle me-2"></i>Giới thiệu</button>
+            <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#tab-team" type="button" role="tab">
+              <i class="bi bi-people me-2"></i>Thông tin nhóm
+            </button>
+            <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#tab-about" type="button" role="tab">
+              <i class="bi bi-info-circle me-2"></i>Giới thiệu
+            </button>
           </div>
         </div>
       </div>
@@ -72,7 +93,9 @@
                       </h5>
                       <div class="d-flex gap-2">
                         <input id="searchBox" class="form-control form-control-sm" placeholder="Tìm theo tên/lớp/mã SV…"/>
-                        <button class="btn btn-brand btn-sm" id="btnAdd"><i class="bi bi-plus-lg me-1"></i>Thêm</button>
+                        <button class="btn btn-brand btn-sm" id="btnAdd">
+                          <i class="bi bi-plus-lg me-1"></i>Thêm
+                        </button>
                       </div>
                     </div>
 
@@ -99,7 +122,9 @@
                 <!-- Danh sách lớp -->
                 <div class="card card-glass rounded-4 mb-4">
                   <div class="card-body">
-                    <h5 class="card-title mb-3"><i class="bi bi-ui-checks-grid me-2"></i>Danh sách lớp</h5>
+                    <h5 class="card-title mb-3">
+                      <i class="bi bi-ui-checks-grid me-2"></i>Danh sách lớp
+                    </h5>
                     <div id="classList" class="list-group list-group-flush"></div>
                   </div>
                 </div>
@@ -179,12 +204,15 @@
                         <div class="invalid-feedback">Chọn trạng thái.</div>
                       </div>
                       <div class="col-12">
-                        <button class="btn btn-brand" type="submit"><i class="bi bi-save me-1"></i>Lưu</button>
+                        <button class="btn btn-brand" type="submit">
+                          <i class="bi bi-save me-1"></i>Lưu
+                        </button>
                       </div>
                     </form>
                   </div>
                 </div>
               </div>
+
               <div class="col-12 col-xl-6">
                 <div class="card card-glass rounded-4 h-100">
                   <div class="card-body d-flex flex-column">
@@ -218,7 +246,9 @@
                     <div class="invalid-feedback">Bắt buộc.</div>
                   </div>
                   <div class="col-12">
-                    <button class="btn btn-brand" type="submit"><i class="bi bi-save me-1"></i>Lưu</button>
+                    <button class="btn btn-brand" type="submit">
+                      <i class="bi bi-save me-1"></i>Lưu
+                    </button>
                   </div>
                 </form>
               </div>
@@ -247,7 +277,9 @@
                     <div class="invalid-feedback">Chọn ngày.</div>
                   </div>
                   <div class="col-12">
-                    <button class="btn btn-brand" type="submit"><i class="bi bi-save me-1"></i>Lưu</button>
+                    <button class="btn btn-brand" type="submit">
+                      <i class="bi bi-save me-1"></i>Lưu
+                    </button>
                   </div>
                 </form>
               </div>
@@ -285,7 +317,10 @@
       <div class="modal-content bg-dark text-light border-0">
         <form id="studentForm" novalidate>
           <div class="modal-header">
-            <h5 class="modal-title"><i class="bi bi-person-lines-fill me-2"></i><span id="modalTitle">Thêm sinh viên</span></h5>
+            <h5 class="modal-title">
+              <i class="bi bi-person-lines-fill me-2"></i>
+              <span id="modalTitle">Thêm sinh viên</span>
+            </h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -328,7 +363,7 @@
     </div>
   </div>
 
-  <!-- Modal Chi tiết điểm -->
+  <!-- MODAL: Chi tiết điểm -->
   <div class="modal fade" id="gradeDetailModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
       <div class="modal-content bg-dark text-light border-0">
@@ -348,21 +383,33 @@
               <div id="detailSemPills" class="nav nav-pills ms-auto"></div>
             </div>
 
-            <!-- Form nhập môn (tín chỉ tự động theo CTĐT, không có ô nhập) -->
+            <!-- Form nhập môn (Số TC đứng trước Điểm; readonly – tự điền theo CTĐT) -->
             <div class="row g-2 mb-3">
-              <div class="col-12 col-md-3">
+              <div class="col-12 col-md-2">
                 <label for="subjectCode" class="form-label">Mã môn</label>
-                <input type="text" id="subjectCode" class="form-control form-control-sm bg-dark text-light border-secondary" placeholder="e.g. IT101" required>
+                <input type="text" id="subjectCode"
+                       class="form-control form-control-sm bg-dark text-light border-secondary"
+                       placeholder="e.g. INT1306" required>
                 <div class="invalid-feedback">Vui lòng nhập mã môn.</div>
               </div>
-              <div class="col-12 col-md-5">
+              <div class="col-12 col-md-4">
                 <label for="subjectName" class="form-label">Tên môn</label>
-                <input type="text" id="subjectName" class="form-control form-control-sm bg-dark text-light border-secondary" placeholder="Nhập tên môn" required>
+                <input type="text" id="subjectName"
+                       class="form-control form-control-sm bg-dark text-light border-secondary"
+                       placeholder="Nhập tên môn" required>
                 <div class="invalid-feedback">Vui lòng nhập tên môn.</div>
               </div>
               <div class="col-12 col-md-2">
+                <label for="subjectCredits" class="form-label">Số TC</label>
+                <input type="number" id="subjectCredits"
+                       class="form-control form-control-sm bg-dark text-light border-secondary"
+                       placeholder="0" step="1" min="0" readonly>
+              </div>
+              <div class="col-12 col-md-2">
                 <label for="subjectScore" class="form-label">Điểm</label>
-                <input type="number" id="subjectScore" class="form-control form-control-sm bg-dark text-light border-secondary" placeholder="0–10" step="0.01" min="0" max="10" required>
+                <input type="number" id="subjectScore"
+                       class="form-control form-control-sm bg-dark text-light border-secondary"
+                       placeholder="0–10" step="0.01" min="0" max="10" required>
                 <div class="invalid-feedback">Điểm phải từ 0 đến 10.</div>
               </div>
               <div class="col-12 col-md-2 d-flex align-items-end">
@@ -425,8 +472,10 @@
     </div>
   </div>
 
-  <!-- SCRIPTS -->
+  <!-- JS libs -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+  <!-- App script -->
   <script src="app.js"></script>
 </body>
 </html>
